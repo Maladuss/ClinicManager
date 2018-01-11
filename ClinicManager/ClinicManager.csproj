@@ -54,6 +54,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Dashboard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -62,12 +66,27 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Dashboard.xaml.cs">
+      <DependentUpon>Dashboard.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\Address.cs" />
+    <Compile Include="Model\CalendarDay.cs" />
+    <Compile Include="Model\CalendarItem.cs" />
+    <Compile Include="Model\Clinic.cs" />
+    <Compile Include="Model\ClinicManager.cs" />
+    <Compile Include="Model\Enums.cs" />
+    <Compile Include="Model\Exam.cs" />
+    <Compile Include="Model\ExamExtension.cs" />
+    <Compile Include="Model\FunctionItem.cs" />
+    <Compile Include="Model\Interface\Function.cs" />
+    <Compile Include="Model\Person.cs" />
+    <Compile Include="Model\PriceItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

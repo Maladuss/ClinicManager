@@ -1,0 +1,23 @@
+﻿<Window x:Class="ClinicManager.Dashboard"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ClinicManager"
+        mc:Ignorable="d"
+        Title="Dashboard" Height="700" Width="800">
+    <Grid>
+        <Button x:Name="buttonRejestracja" Content="Rejestracja" FontSize="30" Foreground="White" HorizontalAlignment="Left" 
+                Margin="181,132,0,0" VerticalAlignment="Top" Width="200" Height="200" Background="#FF00C5FF"               
+                />
+        <Button x:Name="buttonKartoteka" Content="Kartoteki" FontSize="30" Foreground="White" HorizontalAlignment="Left" 
+                Margin="399,132,0,0" VerticalAlignment="Top" Width="200" Height="200" Background="#FF276BFB"               
+                />
+        <Button x:Name="buttonPracownicy" Content="Pracownicy" FontSize="30" Foreground="White" HorizontalAlignment="Left" 
+                Margin="181,344,0,0" VerticalAlignment="Top" Width="200" Height="200" Background="#FF31EA4A"               
+                />
+        <Button x:Name="buttonKUslugi" Content="Usługi" FontSize="30" Foreground="White" HorizontalAlignment="Left" 
+                Margin="399,344,0,0" VerticalAlignment="Top" Width="200" Height="200" Background="#FF00B619"               
+                />
+    </Grid>
+</Window>
