@@ -10,16 +10,17 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace ClinicManager
 {
     /// <summary>
-    /// Interaction logic for Dashboard.xaml
+    /// Interaction logic for PageDashBoard.xaml
     /// </summary>
-    public partial class Dashboard : Window
+    public partial class PageDashBoard : Page
     {
-        public Dashboard()
+        public PageDashBoard()
         {
             InitializeComponent();
         }

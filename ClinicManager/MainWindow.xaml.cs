@@ -23,9 +23,7 @@ namespace ClinicManager
         public MainWindow()
         {
             InitializeComponent();
-            Dashboard dashboard = new Dashboard();
-            this.Hide();
-            dashboard.Show();
+            Main.Content = new PageDashBoard();
         }
     }
 }
