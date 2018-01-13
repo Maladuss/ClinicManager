@@ -70,6 +70,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Page\PageEmployees.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\Address.cs" />
@@ -86,6 +90,9 @@
     <Compile Include="Model\PriceItem.cs" />
     <Compile Include="Page\PageDashBoard.xaml.cs">
       <DependentUpon>PageDashBoard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Page\PageEmployees.xaml.cs">
+      <DependentUpon>PageEmployees.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
