@@ -15,21 +15,24 @@ namespace ClinicManager.Model
         public PersonType PersonType { get; set; }
         public List<FunctionItem> FunctionTypes { get; set; }
         public List<CalendarDay> Calendar { get; set; }
-        public string PESEL { get; set; }
+        //social security number - pesel
+        public string SSN { get; set; }
 
-        public Person(string name, string lastName, Address address, PersonType personType)
+        public Person(string name, string lastName,string ssn, Address address, PersonType personType, List<FunctionItem> funtionItems = null)
         {
             
             Name = name;
             LastName = lastName;
             Address = address;
+            SSN = ssn;
             PersonType = personType;
+            if (funtionItems != null) FunctionTypes = funtionItems; else FunctionTypes = new List<FunctionItem>();
             init();
         }
         private void init()
         {
             Calendar = new List<CalendarDay>();
-            FunctionTypes = new List<FunctionItem>();
+            
             if(PersonType == PersonType.doctor)
             {
                 for (int i = 0; i < 100; i++)

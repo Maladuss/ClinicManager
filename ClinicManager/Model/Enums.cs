@@ -19,7 +19,8 @@ namespace ClinicManager.Model
     public enum FunctionType
     {
         EKG = 0,
-        KGB = 1,
-        CBS = 2,
+        RTG = 1,
+        UKG = 2,
+        EEG = 3
     }
 }

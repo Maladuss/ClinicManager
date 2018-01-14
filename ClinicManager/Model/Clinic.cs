@@ -51,6 +51,10 @@ namespace ClinicManager.Model
         {
             return employees.Where(x => x.FunctionTypes.All(y => y.FunctionType == functionType)).ToList();
         }
+        public List<Person> getEmployee()
+        {
+            return employees;
+        }
         public Person getClient(string name, string lastName)
         {
             return clients.Where(x => x.Name.CompareTo(name.ToUpper()) == 0 && x.LastName.CompareTo(lastName.ToUpper()) == 0).FirstOrDefault();

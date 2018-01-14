@@ -1,4 +1,7 @@
-﻿using System;
+﻿using ClinicManager.Mock;
+using ClinicManager.Model;
+using ClinicManager.Service;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,10 +23,15 @@ namespace ClinicManager
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Clinic clinic { get; set; }
+        private ServiceData serviceData { get; set; }
         public MainWindow()
         {
             InitializeComponent();
-            Main.Content = new PageDashBoard();
+            serviceData = new ServiceData();
+
+            clinic = serviceData.getClinicWithData("Medicover");
+            Main.Content = new PageDashboard(serviceData, clinic);
         }
     }
 }
