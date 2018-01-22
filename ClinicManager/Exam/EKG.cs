@@ -9,9 +9,11 @@ namespace ClinicManager.Exam
 {
     public class EKG : IFunction
     {
-        public string Name { get; set; }
+        public string NamePerformer { get; set; }
         public string Description { get; set; }
         public FunctionType FunctionType { get; set; }
+        public DateTime DateTimeStart { get; set; }
+        public DateTime DateTimeEnd { get; set; }
         public Person patient { get; set; }
         private bool done = false;
 

@@ -15,19 +15,19 @@ namespace ClinicManager.Model
             {
                 case FunctionType.EKG:
                     {
-                        return new EKG() { Name = "EKG", Description = "Elektrokardiografia", FunctionType = FunctionType.EKG };
+                        return new EKG() { NamePerformer = "EKG", Description = "Elektrokardiografia", FunctionType = FunctionType.EKG };
                     }
                 case FunctionType.EEG:
                     {
-                        return new EEG() { Name = "EEG", Description = "Elektroencefalografia", FunctionType = FunctionType.EEG };
+                        return new EEG() { NamePerformer = "EEG", Description = "Elektroencefalografia", FunctionType = FunctionType.EEG };
                     }
                 case FunctionType.RTG:
                     {
-                        return new RTG() { Name = "RTG", Description = "Zdjęcie rentgenowskie", FunctionType = FunctionType.RTG };
+                        return new RTG() { NamePerformer = "RTG", Description = "Zdjęcie rentgenowskie", FunctionType = FunctionType.RTG };
                     }
                 case FunctionType.UKG:
                     {
-                        return new UKG() { Name = "UKG", Description = "Echokardiografia", FunctionType = FunctionType.UKG };
+                        return new UKG() { NamePerformer = "UKG", Description = "Echokardiografia", FunctionType = FunctionType.UKG };
                     }
             }
 

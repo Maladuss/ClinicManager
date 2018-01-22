@@ -14,12 +14,27 @@ namespace ClinicManager.Mock
             switch (type)
             {
                 case PersonType.doctor:
-                    return new Person(name.ToUpper(), lastname.ToUpper(),"123132123", MockAddress.getAddress(), PersonType.doctor);
-                case PersonType.patient:
-                    return new Person(name.ToUpper(), lastname.ToUpper(),"45343634534", MockAddress.getAddress(), PersonType.patient);
+                    return new Person(name.ToUpper(), lastname.ToUpper(), generateSNN(), MockAddress.getAddress(), PersonType.doctor);
 
-                default: return new Person(name.ToUpper(), lastname.ToUpper(),"14348763423", MockAddress.getAddress(), PersonType.doctor);
+                case PersonType.patient:
+                    return new Person(name.ToUpper(), lastname.ToUpper(), generateSNN(), MockAddress.getAddress(), PersonType.patient);
+
+                default: return new Person(name.ToUpper(), lastname.ToUpper(), generateSNN(), MockAddress.getAddress(), PersonType.doctor);
             }
+        }
+        private static readonly Random getrandom = new Random();
+        private static readonly object syncLock = new object();
+        public static int GetRandomNumber(int min, int max)
+        {
+            lock (syncLock)
+            { // synchronize
+                return getrandom.Next(min, max);
+            }
+        }
+        private static string generateSNN()
+        {
+            string tmp = ((GetRandomNumber(1,1000)) * 123).ToString();
+            return tmp;
         }
     }
 }

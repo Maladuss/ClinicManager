@@ -9,7 +9,7 @@ namespace ClinicManager.Model
     public class CalendarDay
     {
         public DateTime Date { get; set; }
-        public List<CalendarItem> CalendarItems {get; set;}
+        public List<IFunction> CalendarItems {get; set;}
 
         public CalendarDay()
         {
@@ -17,7 +17,7 @@ namespace ClinicManager.Model
         }
         private void init()
         {
-            CalendarItems = new List<CalendarItem>();
+            CalendarItems = new List<IFunction>();
         }
     }
 }

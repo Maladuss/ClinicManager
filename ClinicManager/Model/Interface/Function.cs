@@ -10,7 +10,10 @@ namespace ClinicManager.Model
     {
         FunctionType FunctionType { get; set; }
         Person patient { get; set; }
-        string Name { get; set; }
+        string NamePerformer { get; set; }
+        DateTime DateTimeStart { get; set; }
+        DateTime DateTimeEnd { get; set; }
+        string Description { get; set; }
         bool CheckDone();
     }
 }

@@ -74,7 +74,7 @@ namespace ClinicManager.Model
                 if(funItem != null)
                 {
                     end = new DateTime(funItem.Time.Ticks + start.Value.Ticks);
-                    CalendarItem item = null;
+                    IFunction item = null;
                     CalendarDay day = Calendar.Where(x => x.Date.Date.CompareTo(start.Value.Date) == 0).FirstOrDefault();
 
                     if (day != null)
@@ -108,9 +108,11 @@ namespace ClinicManager.Model
                 {                 
                     IFunction exam = ExamExtension.getExam(functionType);
                     exam.patient = patient;
+                    exam.NamePerformer = $"{Name} {LastName}";
+                    exam.DateTimeStart = TimeStart.Value;
+                    exam.DateTimeEnd = timeEnd;
 
-                    item = new CalendarItem() { DateTimeStart = TimeStart.Value, DateTimeEnd = timeEnd, function = exam };
-                    day.CalendarItems.Add(item);
+                    day.CalendarItems.Add(exam);
 
                     return true;                    
                 }                

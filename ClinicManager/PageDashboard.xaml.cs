@@ -40,7 +40,7 @@ namespace ClinicManager
 
         private void CardIndex_Click(object sender, RoutedEventArgs e)
         {
-
+            NavigationService.Navigate(new PageCardIndex(serviceData, clinic.getEmployee()));
         }
 
         private void Empoloyees_Click(object sender, RoutedEventArgs e)

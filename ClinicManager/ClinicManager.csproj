@@ -81,6 +81,7 @@
     <Compile Include="Mock\MockClinic.cs" />
     <Compile Include="Mock\MockFunctionItem.cs" />
     <Compile Include="Mock\MockPerson.cs" />
+    <Compile Include="Model\PersonItem.cs" />
     <Compile Include="PageCardIndex.xaml.cs">
       <DependentUpon>PageCardIndex.xaml</DependentUpon>
     </Compile>

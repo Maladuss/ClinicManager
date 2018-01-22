@@ -59,16 +59,19 @@
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="10*" />
+                <RowDefinition Height="0.6*" />
+                <RowDefinition Height="0.6*" />
+                <RowDefinition Height="9*" />
             </Grid.RowDefinitions>
+            <Button Content="Wyświetl" Margin="5" Grid.Row="0" HorizontalAlignment="Left" Style="{StaticResource ButtonEmployees}" Click="ButtonView"/>
+
             <TextBox x:Name="TextBoxFilter" TextChanged="TextBoxFilter_TextChanged"
-                      Grid.Row="0" Margin="5" Height="25" VerticalAlignment="Bottom"
+                      Grid.Row="1" Margin="5" Height="25" VerticalAlignment="Bottom"
                 />
 
-            <ListView x:Name="listPatient" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+            <ListView x:Name="listPatient" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"
                       SelectionChanged="listPatients_SelectionChanged"
-                      Margin="5">
+                      Margin="5,0,5,5" Height="475">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Imie" Width="100" DisplayMemberBinding="{Binding Name}" />
@@ -83,20 +86,17 @@
                 <RowDefinition Height="10*" />
             </Grid.RowDefinitions>
             <ListView x:Name="listCardIndex" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                      SelectionChanged="listCardIndex_SelectionChanged"
                       Margin="5">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Data" Width="100" DisplayMemberBinding="{Binding DateTimeStart,StringFormat=hh\\:mm}" />
-                        <GridViewColumn Header="Badanie" Width="50" DisplayMemberBinding="{Binding function.FunctionType}" />
-                        <GridViewColumn Header="Badanie" Width="50" DisplayMemberBinding="{Binding function.FunctionType}" />
-                        <GridViewColumn Header="Badanie" Width="50" DisplayMemberBinding="{Binding function.FunctionType}" />
-                        <GridViewColumn Header="Badanie" Width="50" DisplayMemberBinding="{Binding function.FunctionType}" />
-                        <GridViewColumn Header="Badanie" Width="50" DisplayMemberBinding="{Binding function.FunctionType}" />
+                        <GridViewColumn Header="Data" Width="150" DisplayMemberBinding="{Binding DateTimeStart,StringFormat=dd-MMM-yyyy hh\\:mm}" />
+                        <GridViewColumn Header="Badanie" Width="50" DisplayMemberBinding="{Binding FunctionType}" />
+                        <GridViewColumn Header="Lekarz" Width="150" DisplayMemberBinding="{Binding NamePerformer}" />
+                        <GridViewColumn Header="Opis" Width="150" DisplayMemberBinding="{Binding Description}" />
                     </GridView>
                 </ListView.View>
             </ListView>
-            
+
         </Grid>
     </Grid>
 </Page>
