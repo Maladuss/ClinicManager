@@ -34,8 +34,8 @@ namespace ClinicManager
 
         private void Registration_Click(object sender, RoutedEventArgs e)
         {
+            NavigationService.Navigate(new PageRegistration(serviceData, clinic.getEmployee(), clinic.getPatients()));
 
-            
         }
 
         private void CardIndex_Click(object sender, RoutedEventArgs e)

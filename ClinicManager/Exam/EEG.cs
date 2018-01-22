@@ -1,12 +1,13 @@
-﻿using System;
+﻿using ClinicManager.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClinicManager.Model
+namespace ClinicManager.Exam
 {
-    public class EKG: IFunction
+    public class EEG : IFunction
     {
         public string Name { get; set; }
         public string Description { get; set; }

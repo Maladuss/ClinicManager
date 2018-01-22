@@ -10,7 +10,7 @@ namespace ClinicManager.Model
     {
         public string Name { get; set; }
         private List<Person> employees { get; set; }
-        private List<Person> clients { get; set; }
+        private List<Person> patient { get; set; }
 
         public Clinic(string name)
         {
@@ -20,7 +20,7 @@ namespace ClinicManager.Model
         private void init()
         {
             employees = new List<Person>();
-            clients = new List<Person>();
+            patient = new List<Person>();
         }
         public bool addEmployee(Person empolyee)
         {
@@ -32,11 +32,11 @@ namespace ClinicManager.Model
             }
             return false;      
         }
-        public bool addclient(Person client)
+        public bool addPatient(Person patient)
         {
-            if (client != null)
+            if (patient != null)
             {
-                clients.Add(client);
+                this.patient.Add(patient);
 
                 return true;
             }
@@ -55,10 +55,13 @@ namespace ClinicManager.Model
         {
             return employees;
         }
-        public Person getClient(string name, string lastName)
+        public Person getPatient(string name, string lastName)
         {
-            return clients.Where(x => x.Name.CompareTo(name.ToUpper()) == 0 && x.LastName.CompareTo(lastName.ToUpper()) == 0).FirstOrDefault();
+            return patient.Where(x => x.Name.CompareTo(name.ToUpper()) == 0 && x.LastName.CompareTo(lastName.ToUpper()) == 0).FirstOrDefault();
         }
-
+        public List<Person> getPatients()
+        {
+            return patient;
+        }
     }
 }

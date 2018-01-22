@@ -8,7 +8,7 @@ namespace ClinicManager.Model
 {
     public class Person
     {
-        //public int id { get; set; }
+        public int id { get; set; }
         public string Name { get; set; }
         public string LastName { get; set; }
         public Address Address { get; set; }
@@ -64,43 +64,52 @@ namespace ClinicManager.Model
 
             return false;
         }
-        public bool CheckFreeTerm(DateTime start, DateTime end)
+        public bool CheckFreeTerm(DateTime? start, FunctionType type)
         {
-            if(start != null && end != null)
+
+            if(start != null)
             {
-                CalendarItem item = null;
-                CalendarDay day = Calendar.Where(x => x.Date.Date.CompareTo(start.Date) == 0).FirstOrDefault();
-
-                if(day != null)
+                FunctionItem funItem = getFuntionItem(type);
+                DateTime end;
+                if(funItem != null)
                 {
-                    item = day.CalendarItems.Where(x =>
-                    (x.DateTimeStart >= start && x.DateTimeStart > end) &&
-                    (x.DateTimeEnd <= start && x.DateTimeEnd <= end) ||
-                    (x.DateTimeStart <= start && x.DateTimeEnd <= end)
-                    ).FirstOrDefault();
+                    end = new DateTime(funItem.Time.Ticks + start.Value.Ticks);
+                    CalendarItem item = null;
+                    CalendarDay day = Calendar.Where(x => x.Date.Date.CompareTo(start.Value.Date) == 0).FirstOrDefault();
 
-                    if(item == null)
+                    if (day != null)
                     {
-                        return true;
+                        item = day.CalendarItems.Where(x =>
+                        (x.DateTimeStart >= start && x.DateTimeStart > end) &&
+                        (x.DateTimeEnd <= start && x.DateTimeEnd <= end) ||
+                        (x.DateTimeStart <= start && x.DateTimeEnd <= end)
+                        ).FirstOrDefault();
+
+                        if (item == null)
+                        {
+                            return true;
+                        }
                     }
                 }
             }
             return false;
         }
-        public bool addCalendarItem(Person patient, FunctionType functionType, DateTime TimeStart, DateTime timeEnd)
+        public bool addCalendarItem(Person patient, FunctionType functionType, DateTime? TimeStart)
         {
-            if (TimeStart != null && patient != null)
+            if (TimeStart.HasValue && patient != null)
             {
-               
+                FunctionItem funItem = getFuntionItem(functionType);
+                DateTime timeEnd = new DateTime(funItem.Time.Ticks + TimeStart.Value.Ticks);
+
                 CalendarItem item = null;
                
-                CalendarDay day = Calendar.Where(x => x.Date.Date.CompareTo(TimeStart.Date) == 0).FirstOrDefault();
+                CalendarDay day = Calendar.Where(x => x.Date.Date.CompareTo(TimeStart.Value.Date) == 0).FirstOrDefault();
                 if(day != null)
                 {                 
                     IFunction exam = ExamExtension.getExam(functionType);
                     exam.patient = patient;
 
-                    item = new CalendarItem() { DateTimeStart = TimeStart, DateTimeEnd = timeEnd, function = exam };
+                    item = new CalendarItem() { DateTimeStart = TimeStart.Value, DateTimeEnd = timeEnd, function = exam };
                     day.CalendarItems.Add(item);
 
                     return true;                    
@@ -108,6 +117,14 @@ namespace ClinicManager.Model
             }
 
             return false;
+        }
+        public bool CheckFunctionTypesExists(FunctionType type)
+        {
+            return FunctionTypes.Exists(x => x.FunctionType == type);
+        }
+        private FunctionItem getFuntionItem(FunctionType type)
+        {
+            return FunctionTypes.Find(x => x.FunctionType == type);
         }
     }
 }

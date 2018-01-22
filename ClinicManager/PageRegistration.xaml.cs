@@ -2,7 +2,6 @@
 using ClinicManager.Service;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -16,51 +15,72 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Xceed.Wpf.Toolkit;
 
 namespace ClinicManager
 {
     /// <summary>
-    /// Interaction logic for PageEmployees.xaml
+    /// Interaction logic for PageRegistration.xaml
     /// </summary>
-    public partial class PageEmployees : Page
+    public partial class PageRegistration : Page
     {
         private ServiceData serviceData { get; set; }
         private List<Person> employees { get; set; }
+        private List<Person> patients { get; set; }
         private Person selectedPerson;
         private FunctionItem selectedFunction;
         private CollectionView view;
+        private Person selectedEmployee;
 
-        public PageEmployees(ServiceData serviceData, List<Person> employees)
+        public PageRegistration(ServiceData serviceData, List<Person> employees, List<Person> patients)
         {
             this.serviceData = serviceData;
             this.employees = employees;
+            this.patients = patients;
             InitializeComponent();
+
+            listPatient.ItemsSource = patients;
+            view = (CollectionView)CollectionViewSource.GetDefaultView(listPatient.ItemsSource);
+            view.Filter = UserFilter;
 
             listEmpolyees.ItemsSource = employees;
             view = (CollectionView)CollectionViewSource.GetDefaultView(listEmpolyees.ItemsSource);
-            view.Filter = UserFilter;
-
-
+            view.Filter = DoctorFilter;
         }
         private bool UserFilter(object item)
         {
             if (string.IsNullOrEmpty(TextBoxFilter.Text))
                 return true;
             else
-                return ((item as Person).LastName.IndexOf(TextBoxFilter.Text, StringComparison.OrdinalIgnoreCase) >= 0);
+                return ((item as Person).Name.IndexOf(TextBoxFilter.Text, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
+        private bool DoctorFilter(object item)
+        {
+            if (ComboBoxFuntionTyp.SelectedItem == null || DateTimePicker.Value == null)
+            {
+                return false;
+            }
+            else
+            {
+                if ((item as Person).CheckFunctionTypesExists((FunctionType)ComboBoxFuntionTyp.SelectedItem) &&
+                    (item as Person).CheckFreeTerm(DateTimePicker.Value, (FunctionType)ComboBoxFuntionTyp.SelectedItem))
+                {
+                    return true;
+                }
+                return false;
+            }
         }
 
         private void TextBoxFilter_TextChanged(object sender, TextChangedEventArgs e)
         {
-            CollectionViewSource.GetDefaultView(listEmpolyees.ItemsSource).Refresh();
+            CollectionViewSource.GetDefaultView(listPatient.ItemsSource).Refresh();
 
         }
-        
-        private void listEmpolyees_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void listPatients_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             selectedPerson = ((sender as ListView).SelectedItem as Person);
 
-            if(selectedPerson != null)
+            if (selectedPerson != null)
             {
                 fillData(selectedPerson);
             }
@@ -74,36 +94,7 @@ namespace ClinicManager
             TextBoxNumber.Text = person.Address.PostNumber;
             TextBoxCity.Text = person.Address.City;
             TextBoxPostalCode.Text = person.Address.PostalCode;
-            ComboBoxFuntionTyp.ItemsSource = Enum.GetValues(typeof(FunctionType)).Cast<FunctionType>();
-            listFuntion.ItemsSource = person.FunctionTypes;
         }
-
-        private void ButtonAdd(object sender, RoutedEventArgs e)
-        {
-            if(selectedPerson != null && ComboBoxFuntionTyp.SelectedItem != null && !string.IsNullOrEmpty(TextBoxPrice.Text) && !string.IsNullOrEmpty(TextBoxTime.Text))
-            {
-                selectedPerson.FunctionTypes.Add(
-                    new FunctionItem((FunctionType)ComboBoxFuntionTyp.SelectedItem,new PriceItem(PriceItemType.STANDARD, float.Parse(TextBoxPrice.Text,CultureInfo.InvariantCulture.NumberFormat)),new TimeSpan(0,Convert.ToInt32(TextBoxTime.Text),0)));
-                listFuntion.Items.Refresh();
-            }
-        }
-
-        private void ButtonRemove(object sender, RoutedEventArgs e)
-        {
-
-            if(selectedPerson != null && selectedFunction != null)
-            {
-                selectedPerson.FunctionTypes.Remove(selectedFunction);
-                listFuntion.Items.Refresh();
-                selectedFunction = null;
-            }
-        }
-
-        private void listFuntion_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            selectedFunction = ((sender as ListView).SelectedItem as FunctionItem);
-        }
-
         private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
         {
             Regex regex = new Regex("^[0-9]+$");//^\d*[\.\,]\d*$    "^[0-9]+$"   "^[0-9\.\,0-9]+$"
@@ -119,12 +110,10 @@ namespace ClinicManager
             TextBoxNumber.Text = string.Empty;
             TextBoxCity.Text = string.Empty;
             TextBoxPostalCode.Text = string.Empty;
-            ComboBoxFuntionTyp.ItemsSource = Enum.GetValues(typeof(FunctionType)).Cast<FunctionType>();
-            listFuntion.ItemsSource = null;
         }
         private bool updatePerson()
         {
-            if(selectedPerson != null && validationField())
+            if (selectedPerson != null && validationField())
             {
                 selectedPerson.Name = TextBoxName.Text;
                 selectedPerson.LastName = TextBoxLastName.Text;
@@ -133,7 +122,6 @@ namespace ClinicManager
                 selectedPerson.Address.PostNumber = TextBoxNumber.Text;
                 selectedPerson.Address.City = TextBoxCity.Text;
                 selectedPerson.Address.PostalCode = TextBoxPostalCode.Text;
-                selectedPerson.FunctionTypes = listFuntion.ItemsSource as List<FunctionItem>;
 
                 return true;
             }
@@ -159,11 +147,11 @@ namespace ClinicManager
             if (validationField())
             {
                 Address address = new Address() { City = TextBoxCity.Text, PostalCode = TextBoxPostalCode.Text, PostNumber = TextBoxPostalCode.Text, Street = TextBoxStreet.Text };
-                employees.Add(new Person(TextBoxName.Text, TextBoxLastName.Text, TextBoxSSN.Text, address, PersonType.doctor, listFuntion.ItemsSource == null ? null : listFuntion.ItemsSource as List<FunctionItem>));
+                employees.Add(new Person(TextBoxName.Text, TextBoxLastName.Text, TextBoxSSN.Text, address, PersonType.doctor));
                 view.Refresh();
 
                 selectedPerson = null;
-                listEmpolyees.SelectedIndex = -1;
+                listPatient.SelectedIndex = -1;
                 return true;
             }
             else
@@ -174,14 +162,14 @@ namespace ClinicManager
         private void ButtonNew(object sender, RoutedEventArgs e)
         {
             clearControls();
-            listEmpolyees.SelectedIndex = -1;
+            listPatient.SelectedIndex = -1;
         }
 
         private void ButtonUpdatePerson(object sender, RoutedEventArgs e)
         {
             if (!updatePerson())
             {
-                MessageBox.Show("Sprawdz poprawoność wpisanych danych", "Błąd");
+                System.Windows.MessageBox.Show("Sprawdz poprawoność wpisanych danych", "Błąd");
             }
             else
             {
@@ -193,20 +181,75 @@ namespace ClinicManager
         {
             if (!addPerson())
             {
-                MessageBox.Show("Sprawdz poprawoność wpisanych danych", "Błąd");
+                System.Windows.MessageBox.Show("Sprawdz poprawoność wpisanych danych", "Błąd");
             }
         }
 
         private void ButtonRemovePeron(object sender, RoutedEventArgs e)
         {
-            if(selectedPerson != null)
+            if (selectedPerson != null)
             {
                 employees.Remove(selectedPerson);
                 clearControls();
-               // listEmpolyees.Items.Refresh();
                 view.Refresh();
                 selectedPerson = null;
             }
+        }
+
+        private void listEmpolyees_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            selectedEmployee = ((sender as ListView).SelectedItem as Person);
+        }
+
+        private void ButtonSearch(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ButtonAdd(object sender, RoutedEventArgs e)
+        {
+            if (ComboBoxFuntionTyp.SelectedItem != null  && DateTimePicker.Value != null && selectedEmployee != null && selectedPerson != null)
+            {
+                if(selectedEmployee.CheckFreeTerm(DateTimePicker.Value, (FunctionType)ComboBoxFuntionTyp.SelectedItem))
+                {
+                    selectedEmployee.addCalendarItem(selectedPerson, (FunctionType)ComboBoxFuntionTyp.SelectedItem, DateTimePicker.Value);
+
+                    CollectionViewSource.GetDefaultView(listEmpolyees.ItemsSource).Refresh();
+                }
+            
+            }            
+        }
+
+        private void loadingEvent(object sender, RoutedEventArgs e)
+        {
+            DateTimePicker picker = sender as DateTimePicker;
+
+            if(picker != null) picker.Value = DateTime.Now;
+        }
+
+        private void LoadedFuntionType(object sender, RoutedEventArgs e)
+        {
+            ComboBox cb = sender as ComboBox;
+            if(cb != null)
+            {
+                ComboBoxFuntionTyp.ItemsSource = Enum.GetValues(typeof(FunctionType)).Cast<FunctionType>();
+            }
+        }
+
+
+        private void ComboBoxFuntionTyp_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            CollectionViewSource.GetDefaultView(listEmpolyees.ItemsSource).Refresh();
+        }
+
+        private void DateTimePicker_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            CollectionViewSource.GetDefaultView(listEmpolyees.ItemsSource).Refresh();
+        }
+
+        private void loadingvent(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

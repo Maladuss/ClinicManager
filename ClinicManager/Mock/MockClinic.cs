@@ -22,6 +22,11 @@ namespace ClinicManager.Mock
             clinic.getEmployees("Mateusz", "Muszer").addFunctionTypes(MockFunctionItem.getFunctionItem(FunctionType.EKG, FunctionType.UKG));
             clinic.getEmployees("Juzek", "Stalin").addFunctionTypes(MockFunctionItem.getFunctionItem(FunctionType.EKG, FunctionType.EEG, FunctionType.UKG));
 
+            clinic.addPatient(MockPerson.getPerson("Tosia", "Wałowicz", PersonType.patient));
+            clinic.addPatient(MockPerson.getPerson("Ewa", "Malada", PersonType.patient));
+            clinic.addPatient(MockPerson.getPerson("Jadwiga", "Sroka", PersonType.patient));
+            clinic.addPatient(MockPerson.getPerson("Krzysztof", "Stalin", PersonType.patient));
+
             return clinic;
         }
     }
