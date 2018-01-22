@@ -8,7 +8,7 @@ namespace ClinicManager.Model
 {
     public class Person
     {
-        public int id { get; set; }
+        public int PersonId { get; set; }
         public string Name { get; set; }
         public string LastName { get; set; }
         public Address Address { get; set; }
@@ -18,6 +18,7 @@ namespace ClinicManager.Model
         //social security number - pesel
         public string SSN { get; set; }
 
+        public Person() { }
         public Person(string name, string lastName,string ssn, Address address, PersonType personType, List<FunctionItem> funtionItems = null)
         {
             

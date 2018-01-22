@@ -9,7 +9,8 @@ namespace ClinicManager.Model
     public enum PersonType
     {
         patient = 0,
-        doctor = 1
+        doctor = 1,
+        NN = 2
     }
     public enum PriceItemType
     {
