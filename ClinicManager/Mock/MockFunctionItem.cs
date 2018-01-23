@@ -50,5 +50,18 @@ namespace ClinicManager.Mock
 
             return items;
         }
+
+        public static List<FunctionItem> getRandomFunctionItem()
+        {
+            switch (MockPerson.GetRandomNumber(1, 4))
+            {
+                case 1: return getFunctionItem(FunctionType.EEG);
+                case 2: return getFunctionItem(FunctionType.EEG, FunctionType.EKG);
+                case 3: return getFunctionItem(FunctionType.EEG, FunctionType.EKG, FunctionType.RTG);
+                case 4: return getFunctionItem(FunctionType.EEG, FunctionType.EKG, FunctionType.RTG, FunctionType.UKG);
+
+                default: return getFunctionItem(FunctionType.EEG, FunctionType.EKG, FunctionType.RTG, FunctionType.UKG);
+            }
+        }
     }
 }

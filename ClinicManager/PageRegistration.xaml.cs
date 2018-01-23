@@ -29,6 +29,7 @@ namespace ClinicManager
         private List<Person> patients { get; set; }
         private Person selectedPerson;
         private FunctionItem selectedFunction;
+        private CollectionView viewPatient;
         private CollectionView view;
         private Person selectedEmployee;
 
@@ -40,8 +41,8 @@ namespace ClinicManager
             InitializeComponent();
 
             listPatient.ItemsSource = patients;
-            view = (CollectionView)CollectionViewSource.GetDefaultView(listPatient.ItemsSource);
-            view.Filter = UserFilter;
+            viewPatient = (CollectionView)CollectionViewSource.GetDefaultView(listPatient.ItemsSource);
+            viewPatient.Filter = UserFilter;
 
             listEmpolyees.ItemsSource = employees;
             view = (CollectionView)CollectionViewSource.GetDefaultView(listEmpolyees.ItemsSource);
@@ -123,6 +124,7 @@ namespace ClinicManager
                 selectedPerson.Address.City = TextBoxCity.Text;
                 selectedPerson.Address.PostalCode = TextBoxPostalCode.Text;
 
+                serviceData.UpdatePerson(selectedPerson);
                 return true;
             }
             else
@@ -147,8 +149,13 @@ namespace ClinicManager
             if (validationField())
             {
                 Address address = new Address() { City = TextBoxCity.Text, PostalCode = TextBoxPostalCode.Text, PostNumber = TextBoxPostalCode.Text, Street = TextBoxStreet.Text };
-                employees.Add(new Person(TextBoxName.Text, TextBoxLastName.Text, TextBoxSSN.Text, address, PersonType.doctor));
-                view.Refresh();
+                Person person = new Person(TextBoxName.Text, TextBoxLastName.Text, TextBoxSSN.Text, address, PersonType.Patient);
+                serviceData.AddPerson(person);
+                patients.Add(person);
+
+                listPatient.Items.Refresh();
+                viewPatient.Refresh();
+                
 
                 selectedPerson = null;
                 listPatient.SelectedIndex = -1;
@@ -173,7 +180,7 @@ namespace ClinicManager
             }
             else
             {
-                view.Refresh();
+                viewPatient.Refresh();
             }
         }
 
@@ -189,9 +196,11 @@ namespace ClinicManager
         {
             if (selectedPerson != null)
             {
-                employees.Remove(selectedPerson);
+                patients.Remove(selectedPerson);
+                serviceData.DeletePerson(selectedPerson);
+
                 clearControls();
-                view.Refresh();
+                viewPatient.Refresh();
                 selectedPerson = null;
             }
         }

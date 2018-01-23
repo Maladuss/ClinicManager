@@ -13,13 +13,13 @@ namespace ClinicManager.Mock
         {
             switch (type)
             {
-                case PersonType.doctor:
-                    return new Person(name.ToUpper(), lastname.ToUpper(), generateSNN(), MockAddress.getAddress(), PersonType.doctor);
+                case PersonType.Doctor:
+                    return new Person(name.ToUpper(), lastname.ToUpper(), generateSNN(), MockAddress.getAddress(), PersonType.Doctor);
 
-                case PersonType.patient:
-                    return new Person(name.ToUpper(), lastname.ToUpper(), generateSNN(), MockAddress.getAddress(), PersonType.patient);
+                case PersonType.Patient:
+                    return new Person(name.ToUpper(), lastname.ToUpper(), generateSNN(), MockAddress.getAddress(), PersonType.Patient);
 
-                default: return new Person(name.ToUpper(), lastname.ToUpper(), generateSNN(), MockAddress.getAddress(), PersonType.doctor);
+                default: return new Person(name.ToUpper(), lastname.ToUpper(), generateSNN(), MockAddress.getAddress(), PersonType.Doctor);
             }
         }
         private static readonly Random getrandom = new Random();

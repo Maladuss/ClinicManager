@@ -135,6 +135,7 @@ namespace ClinicManager
                 selectedPerson.Address.PostalCode = TextBoxPostalCode.Text;
                 selectedPerson.FunctionTypes = listFuntion.ItemsSource as List<FunctionItem>;
 
+                serviceData.UpdatePerson(selectedPerson);
                 return true;
             }
             else
@@ -159,9 +160,12 @@ namespace ClinicManager
             if (validationField())
             {
                 Address address = new Address() { City = TextBoxCity.Text, PostalCode = TextBoxPostalCode.Text, PostNumber = TextBoxPostalCode.Text, Street = TextBoxStreet.Text };
-                employees.Add(new Person(TextBoxName.Text, TextBoxLastName.Text, TextBoxSSN.Text, address, PersonType.doctor, listFuntion.ItemsSource == null ? null : listFuntion.ItemsSource as List<FunctionItem>));
-                view.Refresh();
+                Person person = new Person(TextBoxName.Text, TextBoxLastName.Text, TextBoxSSN.Text, address, PersonType.Doctor, listFuntion.ItemsSource == null ? null : listFuntion.ItemsSource as List<FunctionItem>);
 
+                serviceData.AddPerson(person);
+                employees.Add(person);
+
+                view.Refresh();
                 selectedPerson = null;
                 listEmpolyees.SelectedIndex = -1;
                 return true;
@@ -202,6 +206,8 @@ namespace ClinicManager
             if(selectedPerson != null)
             {
                 employees.Remove(selectedPerson);
+                serviceData.DeletePerson(selectedPerson);
+
                 clearControls();
                // listEmpolyees.Items.Refresh();
                 view.Refresh();

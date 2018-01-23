@@ -14,6 +14,7 @@ namespace ClinicManager.Service
 {
     public class ServiceData
     {
+        private bool MockOn { get; } = false;
         private DataBaseService dataBase { get; set; }
 
         public ServiceData()
@@ -43,9 +44,27 @@ namespace ClinicManager.Service
                 dataBase.AddFuntionType("Patient");
             }
         }
-        public Model.Clinic getClinicWithData(string name)
-        {           
-            return MockClinic.getClinic(name);
+        public Clinic getClinicWithData(string name)
+        {
+            if (MockOn)
+            {
+                return MockClinic.getClinic(name);
+            }
+            else
+            {
+                Clinic clinic = new Clinic("Medicover");
+
+                //wymuszenie mock
+                List<Person> Empols = getPersons(PersonType.Doctor);
+                foreach(var ob in Empols)
+                {
+                    ob.addFunctionTypes(MockFunctionItem.getRandomFunctionItem());
+                }
+
+                clinic.addEmployees(Empols);
+                clinic.addPatients(getPersons(PersonType.Patient));
+                return clinic;
+            }
         }
         public int AddAddress(Address address)
         {
@@ -71,9 +90,9 @@ namespace ClinicManager.Service
         {
            return dataBase.GetPerson(id);
         }
-        public List<Person> getPersons()
+        public List<Person> getPersons(PersonType type)
         {
-            return dataBase.GetPersons();
+            return dataBase.GetPersons(type);
         }
     }
 }

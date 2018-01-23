@@ -32,11 +32,31 @@ namespace ClinicManager.Model
             }
             return false;      
         }
+        public bool addEmployees(List<Person> empolyees)
+        {
+            if (empolyees != null)
+            {
+                this.employees.AddRange(empolyees);
+
+                return true;
+            }
+            return false;
+        }
         public bool addPatient(Person patient)
         {
             if (patient != null)
             {
                 this.patient.Add(patient);
+
+                return true;
+            }
+            return false;
+        }
+        public bool addPatients(List<Person> patients)
+        {
+            if (patients != null)
+            {
+                this.patient.AddRange(patients);
 
                 return true;
             }

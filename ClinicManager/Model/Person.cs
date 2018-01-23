@@ -12,13 +12,32 @@ namespace ClinicManager.Model
         public string Name { get; set; }
         public string LastName { get; set; }
         public Address Address { get; set; }
-        public PersonType PersonType { get; set; }
+        private PersonType personType;
+        public PersonType PersonType
+        {
+            get
+            {
+                return personType;
+            }
+            set
+            {
+                personType = value;
+                if (personType == PersonType.Doctor)
+                {
+                    initCalendar();
+                }
+            }
+        }
         public List<FunctionItem> FunctionTypes { get; set; }
         public List<CalendarDay> Calendar { get; set; }
         //social security number - pesel
         public string SSN { get; set; }
 
-        public Person() { }
+        public Person()
+        {
+            FunctionTypes = new List<FunctionItem>();
+           
+        }
         public Person(string name, string lastName,string ssn, Address address, PersonType personType, List<FunctionItem> funtionItems = null)
         {
             
@@ -28,20 +47,18 @@ namespace ClinicManager.Model
             SSN = ssn;
             PersonType = personType;
             if (funtionItems != null) FunctionTypes = funtionItems; else FunctionTypes = new List<FunctionItem>();
-            init();
         }
-        private void init()
+        private void initCalendar()
         {
             Calendar = new List<CalendarDay>();
-            
-            if(PersonType == PersonType.doctor)
+
+            if (PersonType == PersonType.Doctor)
             {
                 for (int i = 0; i < 100; i++)
                 {
                     Calendar.Add(new CalendarDay() { Date = DateTime.Today.AddDays(i) });
                 }
             }
-            
         }
         public bool addFunctionTypes(FunctionItem functionItem)
         {

@@ -8,8 +8,8 @@ namespace ClinicManager.Model
 {
     public enum PersonType
     {
-        patient = 0,
-        doctor = 1,
+        Patient = 0,
+        Doctor = 1,
         NN = 2
     }
     public enum PriceItemType

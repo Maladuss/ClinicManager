@@ -260,16 +260,17 @@ namespace ClinicManager.DataBase
             }
             return person;
         }
-        public List<Person> GetPersons()
+        public List<Person> GetPersons(PersonType type)
         {
             List<Person> persons = new List<Person>();
             Person person = null;
 
             using (SqlCommand sqlCommand = new SqlCommand(
-                                    @"SELECT * from Person as p  
+                                    @"SELECT *, pt.Name as PersonName from Person as p  
                                     join Address as a ON p.AddressId = a.AddressId
-                                    join PersonType as pt on p.PersonTypeId = pt.PersonTypeId", cnn))
+                                    join PersonType as pt on p.PersonTypeId = pt.PersonTypeId where pt.Name = @type", cnn))
             {
+                sqlCommand.Parameters.AddWithValue("@type", type.ToString());
                 using (SqlDataReader reader = sqlCommand.ExecuteReader())
                 {
                     if (reader.HasRows)
@@ -279,7 +280,7 @@ namespace ClinicManager.DataBase
                             person = new Person();
                             person.PersonId = Convert.ToInt32(reader["PersonId"]); ;
                             person.Name = reader["Name"].ToString();
-                            person.LastName = reader["LastNAme"].ToString();
+                            person.LastName = reader["LastName"].ToString();
                             person.SSN = reader["SSN"].ToString();
                             person.Address = new Address();
                             person.Address.City = reader["City"].ToString();
@@ -287,7 +288,8 @@ namespace ClinicManager.DataBase
                             person.Address.PostalCode = reader["PostalCode"].ToString();
                             person.Address.PostNumber = reader["PostNumber"].ToString();
                             person.Address.AddressId = Convert.ToInt32(reader["AddressId"]);
-                            string name = reader["Name"].ToString();
+                            string name = reader["PersonName"].ToString();
+                            name = name.Replace(" ", string.Empty);
                             if (!string.IsNullOrEmpty(name))
                             {
                                 person.PersonType = Enum.GetValues(typeof(PersonType)).Cast<PersonType>().Where(x => x.ToString().CompareTo(name) == 0).FirstOrDefault();
