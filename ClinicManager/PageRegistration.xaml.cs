@@ -28,7 +28,6 @@ namespace ClinicManager
         private List<Person> employees { get; set; }
         private List<Person> patients { get; set; }
         private Person selectedPerson;
-        private FunctionItem selectedFunction;
         private CollectionView viewPatient;
         private CollectionView view;
         private Person selectedEmployee;
@@ -221,7 +220,12 @@ namespace ClinicManager
             {
                 if(selectedEmployee.CheckFreeTerm(DateTimePicker.Value, (FunctionType)ComboBoxFuntionTyp.SelectedItem))
                 {
-                    selectedEmployee.addCalendarItem(selectedPerson, (FunctionType)ComboBoxFuntionTyp.SelectedItem, DateTimePicker.Value);
+                    
+                    IFunction exam = selectedEmployee.addCalendarItem(selectedPerson, (FunctionType)ComboBoxFuntionTyp.SelectedItem, DateTimePicker.Value);
+                    if(exam != null)
+                    {
+                        serviceData.AddCalendarDay(exam, selectedEmployee.PersonId);
+                    }
 
                     CollectionViewSource.GetDefaultView(listEmpolyees.ItemsSource).Refresh();
                 }

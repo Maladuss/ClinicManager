@@ -79,6 +79,7 @@ namespace ClinicManager.Model
         {
             return patient.Where(x => x.Name.CompareTo(name.ToUpper()) == 0 && x.LastName.CompareTo(lastName.ToUpper()) == 0).FirstOrDefault();
         }
+
         public List<Person> getPatients()
         {
             return patient;

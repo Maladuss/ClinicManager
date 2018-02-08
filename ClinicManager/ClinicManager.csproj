@@ -74,7 +74,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DataBase\DataBaseService.cs" />
+    <Compile Include="DataBase\DataBaseService.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Exam\EEG.cs" />
     <Compile Include="Exam\EKG.cs" />
     <Compile Include="Exam\RTG.cs" />

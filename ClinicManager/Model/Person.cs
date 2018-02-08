@@ -112,15 +112,13 @@ namespace ClinicManager.Model
             }
             return false;
         }
-        public bool addCalendarItem(Person patient, FunctionType functionType, DateTime? TimeStart)
+        public IFunction addCalendarItem(Person patient, FunctionType functionType, DateTime? TimeStart)
         {
             if (TimeStart.HasValue && patient != null)
             {
                 FunctionItem funItem = getFuntionItem(functionType);
                 DateTime timeEnd = new DateTime(funItem.Time.Ticks + TimeStart.Value.Ticks);
-
-                CalendarItem item = null;
-               
+             
                 CalendarDay day = Calendar.Where(x => x.Date.Date.CompareTo(TimeStart.Value.Date) == 0).FirstOrDefault();
                 if(day != null)
                 {                 
@@ -132,11 +130,11 @@ namespace ClinicManager.Model
 
                     day.CalendarItems.Add(exam);
 
-                    return true;                    
+                    return exam;                    
                 }                
             }
 
-            return false;
+            return null;
         }
         public bool CheckFunctionTypesExists(FunctionType type)
         {

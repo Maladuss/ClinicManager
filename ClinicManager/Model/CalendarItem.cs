@@ -9,8 +9,7 @@ namespace ClinicManager.Model
     public class CalendarItem
     {
         public DateTime DateTimeStart { get; set; }
-        public DateTime DateTimeEnd { get; set; }
-        public IFunction function { get; set; }
-
+        public FunctionType FunctionType { get; set; }
+        public int PersonId { get; set; }
     }
 }

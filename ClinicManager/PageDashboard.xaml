@@ -66,17 +66,12 @@
                 Click="CardIndex_Click"
                 />
         <Button x:Name="buttonEmployees" Content="Pracownicy" Style="{StaticResource ResourceKey=ButtonDashboard}"
-                Grid.Column="1" Grid.Row="2"
-                HorizontalAlignment="Right"
+                Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2"
+                HorizontalAlignment="Center"
                 VerticalAlignment="Top"
                 Margin="5" Background="#FF31EA4A"
                 Click="Empoloyees_Click"
                 />
-        <Button x:Name="buttonServices" Content="Usługi" Style="{StaticResource ResourceKey=ButtonDashboard}"
-                Grid.Column="2" Grid.Row="2"
-                HorizontalAlignment="Left"
-                 VerticalAlignment="Top"
-                Margin="5" Background="#FF00B619"               
-                />
+
     </Grid>
 </Page>

@@ -12,7 +12,7 @@ namespace ClinicManager.DataBase
     public class DataBaseService
     {
         private SqlConnection cnn { get; set; }
-        private string ServerName { get; } = @"GABRIEL\SQLEXPRESS";
+        private string ServerName { get; } = @"DESKTOP-NOOS9TM\SQLEXPRESS";
 
         public void Connection()
         {
@@ -95,7 +95,7 @@ namespace ClinicManager.DataBase
                 {
                     if (reader.HasRows && reader.Read())
                     {
-                        string name = reader["Name"].ToString();
+                        string name = reader["Name"].ToString().Trim();
                         if (!string.IsNullOrEmpty(name))
                         {
                             personType = Enum.GetValues(typeof(PersonType)).Cast<PersonType>().Where(x => x.ToString().CompareTo(name) == 0).FirstOrDefault();
@@ -247,7 +247,7 @@ namespace ClinicManager.DataBase
                         person.Address.PostalCode = reader["PostalCode"].ToString();
                         person.Address.PostNumber = reader["PostNumber"].ToString();
                         person.Address.AddressId = Convert.ToInt32(reader["AddressId"]);
-                        string name = reader["Name"].ToString();
+                        string name = reader["Name"].ToString().Trim();
                         if (!string.IsNullOrEmpty(name))
                         {
                             person.PersonType = Enum.GetValues(typeof(PersonType)).Cast<PersonType>().Where(x => x.ToString().CompareTo(name) == 0).FirstOrDefault();
@@ -259,7 +259,7 @@ namespace ClinicManager.DataBase
                 }
             }
             return person;
-        }
+        }  
         public List<Person> GetPersons(PersonType type)
         {
             List<Person> persons = new List<Person>();
@@ -288,7 +288,7 @@ namespace ClinicManager.DataBase
                             person.Address.PostalCode = reader["PostalCode"].ToString();
                             person.Address.PostNumber = reader["PostNumber"].ToString();
                             person.Address.AddressId = Convert.ToInt32(reader["AddressId"]);
-                            string name = reader["PersonName"].ToString();
+                            string name = reader["PersonName"].ToString().Trim();
                             name = name.Replace(" ", string.Empty);
                             if (!string.IsNullOrEmpty(name))
                             {
@@ -304,6 +304,169 @@ namespace ClinicManager.DataBase
                 }
             }
             return persons;
+        }
+        public int GetFunctionTypeId(string type)
+        {
+            int id = -1;
+            using (SqlCommand sqlCommand = new SqlCommand("SELECT FunctionTypeId from FunctionType where Name = @type", cnn))
+            {
+                sqlCommand.Parameters.AddWithValue("@type", type);
+                using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                {
+                    if (reader.HasRows && reader.Read())
+                    {
+                        id = Convert.ToInt32(reader["FunctionTypeId"]);
+                    }
+                    reader.Close();
+                }
+            }
+            return id;
+        }      
+        public int AddFunction(FunctionItem function, int PersonId)
+        {
+            int functionId = -1;
+            int functionTypeId = GetFunctionTypeId(function.FunctionType.ToString());
+            
+            string SQL = @"INSERT INTO [dbo].[Function]
+           ([PriceStandard],[Time],[FuntionTypeId]) 
+                OUTPUT Inserted.FunctionId  VALUES(@PriceStandard, @Time, @FuntionTypeId)";
+            using (SqlCommand sqlCommand = new SqlCommand(SQL, cnn))
+            {
+                sqlCommand.Parameters.AddWithValue("@PriceStandard", function.PriceItems.Where(x =>x.PriceItemType == PriceItemType.STANDARD).FirstOrDefault().Price);
+                sqlCommand.Parameters.AddWithValue("@Time", function.Time);
+                sqlCommand.Parameters.AddWithValue("@FuntionTypeId", functionTypeId);
+                using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                {
+                    if (reader.HasRows && reader.Read())
+                    {
+                        functionId = Convert.ToInt32(reader["FunctionId"]);
+                    }
+                    reader.Close();
+                }
+            }
+            function.FunctionId = functionId;
+            AddPersonFunction(functionId, PersonId);
+
+            return functionId;
+        }
+        public void AddPersonFunction(int functionId, int PersonId)
+        {
+            string SQL = @"INSERT INTO [dbo].[PersonFunction]([PersonId],[FunctionId]) VALUES(@PersonId, @FunctionId)";
+            using (SqlCommand sqlCommand = new SqlCommand(SQL, cnn))
+            {
+                sqlCommand.Parameters.AddWithValue("@PersonId", PersonId);
+                sqlCommand.Parameters.AddWithValue("@FunctionId", functionId);
+                using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                {
+                    reader.Close();
+                }
+            }
+        }
+        public List<FunctionItem> GetFunctions(int Personid)
+        {
+            List<FunctionItem> functions = new List<FunctionItem>();
+            FunctionItem function = new FunctionItem();
+       
+            using (SqlCommand sqlCommand = new SqlCommand(
+                                    @"select fun.*, ft.[Name] from PersonFunction as pf join Person as p on pf.PersonId = p.PersonId join [Function] as fun on pf.FunctionId = fun.FunctionId 
+                                        join FunctionType as ft on fun.FuntionTypeId = ft.FunctionTypeId
+                                        where p.PersonId = @id", cnn))
+            {
+                sqlCommand.Parameters.AddWithValue("@id", Personid);
+                using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            function = new FunctionItem();
+                            function.FunctionId = Convert.ToInt32(reader["FunctionId"]);
+                            string name = reader["Name"].ToString().Trim();
+                            function.FunctionType = Enum.GetValues(typeof(FunctionType)).Cast<FunctionType>().Where(x => x.ToString().CompareTo(name) == 0).FirstOrDefault();
+                            function.PriceItems.Add(new PriceItem(PriceItemType.STANDARD, float.Parse(reader["PriceStandard"].ToString())));
+                            string time = reader["Time"].ToString();
+                            function.Time = DateTime.ParseExact(time, "dd.MM.yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture).TimeOfDay;
+                            functions.Add(function);
+                        }
+                    }
+                    reader.Close();          
+                }
+            }
+            return functions;
+        }
+        public void DeleteFunction(int functionId)
+        {
+            executeSQL($"DELETE FROM [dbo].[PersonFunction] WHERE FunctionId = {functionId}");
+            executeSQL($"DELETE FROM [dbo].[Function] WHERE FunctionId = {functionId}");
+        }
+        public int AddCalendarDay(IFunction fun, int idDoctor)
+        {
+            int calendarDayId = -1;
+            int functionTypeId = GetFunctionTypeId(fun.FunctionType.ToString());
+
+            string SQL = @"INSERT INTO [dbo].[CalendarDay]([FunctionTypeId],[TimeStart],[PersonPatientId])
+                         OUTPUT Inserted.CalendarDayId  VALUES(@FunctionTypeId, @TimeStart, @PersonPatientId)";
+            using (SqlCommand sqlCommand = new SqlCommand(SQL, cnn))
+            {
+                sqlCommand.Parameters.AddWithValue("@FunctionTypeId", functionTypeId);
+                sqlCommand.Parameters.AddWithValue("@TimeStart", fun.DateTimeStart);
+                sqlCommand.Parameters.AddWithValue("@PersonPatientId", fun.patient.PersonId);
+                using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                {
+                    if (reader.HasRows && reader.Read())
+                    {
+                        calendarDayId = Convert.ToInt32(reader["CalendarDayId"]);
+                    }
+                    reader.Close();
+                }
+            }
+
+            AddPersonCalendarDay(calendarDayId, idDoctor);
+
+            return calendarDayId;
+        }
+        public void AddPersonCalendarDay(int CalendarDayId, int PersonId)
+        {
+            string SQL = @"INSERT INTO [dbo].[PersonCalendarDay]([CalendarDayId],[PersonId]) VALUES(@CalendarDayId, @PersonId)";
+            using (SqlCommand sqlCommand = new SqlCommand(SQL, cnn))
+            {
+                sqlCommand.Parameters.AddWithValue("@CalendarDayId", CalendarDayId);
+                sqlCommand.Parameters.AddWithValue("@PersonId", PersonId);
+                using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                {
+                    reader.Close();
+                }
+            }
+        }
+        public List<CalendarItem> GetCalendarDays(int Personid)
+        {
+            List<CalendarItem> calendarItems = new List<CalendarItem>();
+            CalendarItem item = new CalendarItem();
+
+            using (SqlCommand sqlCommand = new SqlCommand(
+                                    @"  select cd.*, ft.[Name] from PersonCalendarDay as pc join Person as p on pc.PersonId = p.PersonId join CalendarDay as cd on pc.CalendarDayId = cd.CalendarDayId
+                                        join FunctionType as ft on cd.FunctionTypeId = ft.FunctionTypeId
+                                        where p.PersonId = @id", cnn))
+            {
+                sqlCommand.Parameters.AddWithValue("@id", Personid);
+                using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            item = new CalendarItem();
+                            item.PersonId = Convert.ToInt32(reader["PersonPatientId"]);
+                            item.FunctionType = Enum.GetValues(typeof(FunctionType)).Cast<FunctionType>().Where(x => x.ToString().CompareTo(reader["Name"].ToString().Trim()) == 0).FirstOrDefault();
+                            string time = reader["TimeStart"].ToString();
+                            item.DateTimeStart = DateTime.ParseExact(time, "dd.MM.yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+                            calendarItems.Add(item);
+                        }
+                    }
+                    reader.Close();
+                }
+            }
+            return calendarItems;
         }
     }
 }

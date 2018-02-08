@@ -82,8 +82,10 @@ namespace ClinicManager
         {
             if(selectedPerson != null && ComboBoxFuntionTyp.SelectedItem != null && !string.IsNullOrEmpty(TextBoxPrice.Text) && !string.IsNullOrEmpty(TextBoxTime.Text))
             {
-                selectedPerson.FunctionTypes.Add(
-                    new FunctionItem((FunctionType)ComboBoxFuntionTyp.SelectedItem,new PriceItem(PriceItemType.STANDARD, float.Parse(TextBoxPrice.Text,CultureInfo.InvariantCulture.NumberFormat)),new TimeSpan(0,Convert.ToInt32(TextBoxTime.Text),0)));
+                FunctionItem item = new FunctionItem((FunctionType)ComboBoxFuntionTyp.SelectedItem, new PriceItem(PriceItemType.STANDARD, float.Parse(TextBoxPrice.Text, CultureInfo.InvariantCulture.NumberFormat)), new TimeSpan(0, Convert.ToInt32(TextBoxTime.Text), 0));
+                selectedPerson.FunctionTypes.Add(item);
+                serviceData.AddFunction(item, selectedPerson.PersonId);
+
                 listFuntion.Items.Refresh();
             }
         }
@@ -93,6 +95,7 @@ namespace ClinicManager
 
             if(selectedPerson != null && selectedFunction != null)
             {
+                serviceData.DeleteFunction(selectedFunction.FunctionId);
                 selectedPerson.FunctionTypes.Remove(selectedFunction);
                 listFuntion.Items.Refresh();
                 selectedFunction = null;

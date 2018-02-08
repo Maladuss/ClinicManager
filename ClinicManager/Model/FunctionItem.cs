@@ -8,6 +8,7 @@ namespace ClinicManager.Model
 {
     public class FunctionItem
     {
+        public int FunctionId { get; set; }
         public FunctionType FunctionType { get; set; }
         public List<PriceItem> PriceItems { get; set; }
         public string PriceItemToString

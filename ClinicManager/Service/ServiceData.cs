@@ -52,20 +52,39 @@ namespace ClinicManager.Service
             }
             else
             {
-                Clinic clinic = new Clinic("Medicover");
-
-                //wymuszenie mock
-                List<Person> Empols = getPersons(PersonType.Doctor);
-                foreach(var ob in Empols)
-                {
-                    ob.addFunctionTypes(MockFunctionItem.getRandomFunctionItem());
-                }
-
-                clinic.addEmployees(Empols);
+                Clinic clinic = new Clinic("Medicover");                
                 clinic.addPatients(getPersons(PersonType.Patient));
+                setPersons(clinic);
                 return clinic;
             }
         }
+        //for DOCTOR!!!
+        private void setPersons(Clinic clinic)
+        {
+            List<Person> Empols = getPersons(PersonType.Doctor);
+            
+            foreach(var em in Empols)
+            {
+                List<CalendarItem> items = dataBase.GetCalendarDays(em.PersonId);
+                foreach(var ci in items)
+                {
+                    if(clinic.getPatients().Exists(x => x.PersonId == ci.PersonId))
+                    {
+                        Person patient = clinic.getPatients().Where(x => x.PersonId == ci.PersonId).FirstOrDefault();
+                        em.addCalendarItem(patient, ci.FunctionType, ci.DateTimeStart);
+                    }
+                    else
+                    {
+                        Person patient = dataBase.GetPerson(ci.PersonId);
+                        if(patient != null)
+                            em.addCalendarItem(patient, ci.FunctionType, ci.DateTimeStart);
+                    }
+                }
+
+            }
+            clinic.addEmployees(Empols);
+        }
+
         public int AddAddress(Address address)
         {
             return dataBase.AddAddress(address);
@@ -92,7 +111,34 @@ namespace ClinicManager.Service
         }
         public List<Person> getPersons(PersonType type)
         {
-            return dataBase.GetPersons(type);
+            List<Person> persons = dataBase.GetPersons(type);
+
+            if(type == PersonType.Doctor)
+            {
+                foreach (var ob in persons)
+                {
+                    ob.addFunctionTypes(dataBase.GetFunctions(ob.PersonId));
+                }
+            }
+            return persons;
+        }
+        public bool AddFunction(FunctionItem function, int PersonId)
+        {
+            int FunctionId = dataBase.AddFunction(function, PersonId);
+            if (FunctionId == -1) return false;
+            return true;
+        }
+        public List<FunctionItem> GetFunctions(int Personid)
+        {
+            return dataBase.GetFunctions(Personid);
+        }
+        public void DeleteFunction(int functionId)
+        {
+            dataBase.DeleteFunction(functionId);
+        }
+        public void AddCalendarDay(IFunction function, int idPerson)
+        {
+            dataBase.AddCalendarDay(function, idPerson);
         }
     }
 }
